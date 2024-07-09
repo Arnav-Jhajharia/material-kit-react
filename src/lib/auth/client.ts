@@ -30,7 +30,7 @@ async function signup(firstName: string, lastName: string, email: string, passwo
             password,
             team,
             key
-        });
+        }); 
         // Handle successful signup
         console.log('Signup successful:', response.data);
         // Save the token to local storage or use it as needed
