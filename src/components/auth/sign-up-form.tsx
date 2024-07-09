@@ -69,7 +69,7 @@ export function SignUpForm(): React.JSX.Element {
       // console.log('maaaacha')
       // UserProvider, for this case, will not refresh the router
       // After refresh, GuestGuard will handle the redirect
-      router.refresh();
+      router.replace('/auth/sign-in');
     },
     [checkSession, router, setError]
   );

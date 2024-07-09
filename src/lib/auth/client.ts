@@ -1,25 +1,31 @@
 'use client';
 import axios from 'axios';
-async function login(email:any, password:any) {
-    const response = await fetch('http://127.0.0.1:5500/api/auth/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    });
 
-    const data = await response.json();
-    if (response.ok) {
+
+async function login(email: any, password: any) {
+    try {
+        const response = await axios.post('http://127.0.0.1:5500/login', {
+            email,
+            password
+        });
         // Handle successful login
-        console.log('Login successful:', data);
+        console.log('Login successful:', response.data);
         // Save the token to local storage or use it as needed
-        localStorage.setItem('custom-auth-token', data.token);
-    } else {
-        // Handle errors
-        console.error('Login failed:', data.message);
+        localStorage.setItem('custom-auth-token', response.data.token);
+    } catch (error:any) {
+        if (error.response) {
+            // Handle errors
+            console.error('Login failed:', error.response.data.message);
+        } else {
+            console.error('Error:', error.message);
+        }
     }
 }
+
+// // Example usage
+// login('user@example.com', 'password123');
+
+
 
 async function signup(firstName: string, lastName: string, email: string, password: string, team: string, key: string) {
     try {
@@ -34,7 +40,7 @@ async function signup(firstName: string, lastName: string, email: string, passwo
         // Handle successful signup
         console.log('Signup successful:', response.data);
         // Save the token to local storage or use it as needed
-        localStorage.setItem('custom-auth-token', response.data.token);
+        // localStorage.setItem('custom-auth-token', response.data.token);
         return
     } catch (error:any) {
         if (error.response) {
@@ -108,7 +114,7 @@ class AuthClient {
     const { email, password } = params;
 
     // Make API request
-    
+    login(email, password)
 
     const token = generateToken();
     localStorage.setItem('custom-auth-token', token);
