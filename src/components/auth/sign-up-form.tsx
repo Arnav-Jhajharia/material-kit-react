@@ -28,11 +28,14 @@ const schema = zod.object({
   email: zod.string().min(1, { message: 'Email is required' }).email(),
   password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
   terms: zod.boolean().refine((value) => value, 'You must accept the terms and conditions'),
+  team: zod.string().min(1, { message: 'Team is required' }),
+  key: zod.string().min(0),
+
 });
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false } satisfies Values;
+const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false, team: '', key: ''} satisfies Values;
 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
@@ -51,7 +54,7 @@ export function SignUpForm(): React.JSX.Element {
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
       setIsPending(true);
-
+      console.log('maaaacha')
       const { error } = await authClient.signUp(values);
 
       if (error) {
@@ -62,7 +65,7 @@ export function SignUpForm(): React.JSX.Element {
 
       // Refresh the auth state
       await checkSession?.();
-
+      console.log('maaaacha')
       // UserProvider, for this case, will not refresh the router
       // After refresh, GuestGuard will handle the redirect
       router.refresh();
@@ -129,6 +132,31 @@ export function SignUpForm(): React.JSX.Element {
           />
           <Controller
             control={control}
+            name="team"
+            render={({ field }) => (
+              <FormControl error={Boolean(errors.password)}>
+                <InputLabel>Team</InputLabel>
+                <OutlinedInput {...field} label="Team" type="text" />
+                {errors.password ? <FormHelperText>{errors.team?.message}</FormHelperText> : null}
+              </FormControl>
+            )}
+            
+          />
+           <Controller
+            control={control}
+            name="key"
+            render={({ field }) => (
+              <FormControl error={Boolean(errors.password)}>
+                <InputLabel>Key (Leave blank for analyst)</InputLabel>
+                <OutlinedInput {...field} label="key" type="Password" />
+                {errors.password ? <FormHelperText>{errors.key?.message}</FormHelperText> : null}
+              </FormControl>
+            )}
+            
+          />
+          
+          <Controller
+            control={control}
             name="terms"
             render={({ field }) => (
               <div>
@@ -150,7 +178,7 @@ export function SignUpForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">Created users are not persisted</Alert>
+      {/* <Alert color="warning">Created users are not persisted</Alert> */}
     </Stack>
   );
 }

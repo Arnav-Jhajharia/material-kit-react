@@ -1,4 +1,52 @@
 'use client';
+import axios from 'axios';
+async function login(email:any, password:any) {
+    const response = await fetch('http://127.0.0.1:5500/api/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+        // Handle successful login
+        console.log('Login successful:', data);
+        // Save the token to local storage or use it as needed
+        localStorage.setItem('custom-auth-token', data.token);
+    } else {
+        // Handle errors
+        console.error('Login failed:', data.message);
+    }
+}
+
+async function signup(firstName: string, lastName: string, email: string, password: string, team: string, key: string) {
+    try {
+        const response = await axios.post('http://localhost:5500/api/auth/signup', {
+            firstName,
+            lastName,
+            email,
+            password,
+            team,
+            key
+        });
+        // Handle successful signup
+        console.log('Signup successful:', response.data);
+        // Save the token to local storage or use it as needed
+        localStorage.setItem('custom-auth-token', response.data.token);
+        return
+    } catch (error:any) {
+        if (error.response) {
+            // Handle errors
+            console.error('Signup failed:', error.response.data.message);
+        } else {
+            console.error('Error:', error.message);
+        }
+    }
+}
+// Example usage
+
 
 import type { User } from '@/types/user';
 
@@ -21,6 +69,8 @@ export interface SignUpParams {
   lastName: string;
   email: string;
   password: string;
+  key: string,
+  team: string
 }
 
 export interface SignInWithOAuthParams {
@@ -37,12 +87,15 @@ export interface ResetPasswordParams {
 }
 
 class AuthClient {
-  async signUp(_: SignUpParams): Promise<{ error?: string }> {
+  async signUp(params: SignUpParams): Promise<{ error?: string }> {
     // Make API request
+   
 
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
+
+    // // We do not handle the API, so we'll just generate a token and store it in localStorage.
+    // const token = generateToken();
+    // localStorage.setItem('custom-auth-token', token);
+    signup(params.firstName, params.lastName, params.email, params.password, params.team, params.key)
 
     return {};
   }
@@ -55,11 +108,7 @@ class AuthClient {
     const { email, password } = params;
 
     // Make API request
-
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
-    }
+    
 
     const token = generateToken();
     localStorage.setItem('custom-auth-token', token);
