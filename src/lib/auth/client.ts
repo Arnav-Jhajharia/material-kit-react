@@ -4,12 +4,13 @@ import axios from 'axios';
 
 async function login(email: any, password: any) {
     try {
-        const response = await axios.post('http://127.0.0.1:5500/login', {
+        const response = await axios.post('http://127.0.0.1:5500/api/auth/login', {
             email,
             password
         });
         // Handle successful login
         console.log('Login successful:', response.data);
+        console.log(response.data)
         // Save the token to local storage or use it as needed
         localStorage.setItem('custom-auth-token', response.data.token);
     } catch (error:any) {
@@ -112,12 +113,12 @@ class AuthClient {
 
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
     const { email, password } = params;
-
+    console.log(email, password)
     // Make API request
     login(email, password)
 
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
+    // const token = generateToken();
+    // localStorage.setItem('custom-auth-token', token);
 
     return {};
   }
